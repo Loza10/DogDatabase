@@ -1,0 +1,64 @@
+<a [routerLink]="'/dog-dashboard'">
+  <span class="material-icons">pets</span>
+</a>
+<div>
+  <label for="month">Month</label>
+  <p-dropdown
+    id="month"
+    [(ngModel)]="month"
+    [options]="months"
+    optionLabel="name"
+    optionValue="value"
+    placeholder="Select a Month"
+    id="input"
+  >
+  </p-dropdown>
+
+  <label for="year">Year</label>
+  <p-dropdown
+    id="year"
+    [(ngModel)]="year"
+    [options]="years"
+    optionLabel="name"
+    optionValue="value"
+    placeholder="Select a Year"
+    id="input"
+  >
+  </p-dropdown>
+
+  <button
+    pButton
+    type="button"
+    label="Search"
+    icon="pi pi-search"
+    class="p-button-primary"
+    (click)="getReport()"
+    id="input"
+  ></button>
+
+  <p-table [value]="volunteers">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email Address</th>
+        <th>Milestone Birthday</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-volunteer>
+      <tr>
+        <td>{{ volunteer.firstName }}</td>
+        <td>{{ volunteer.lastName }}</td>
+        <td>{{ volunteer.emailAddress }}</td>
+        <td>{{ volunteer.mileStoneBirthday }}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="4" style="text-align: center">
+          No volunteer birthdays this month!
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

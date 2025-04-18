@@ -1,0 +1,32 @@
+<div class="background">
+    <div class="container">
+        <div [formGroup]="addExpenseForm" class="form_container">
+            <div  class="title">
+                <div class="header_text">Add Expense</div>
+            </div>
+           <p-messages></p-messages>
+            <div class="input">
+                <label for="expense_date" class="text">Expense Date</label>
+                <p-datepicker inputId = "expense_date" formControlName="expense_date"/>
+            </div>
+
+            <div class="input">
+                <label for="vendor_name" class="text">Vendor Name</label>
+                <input id="vendor_name" type="text" placeholder="Name" pInputText formControlName="vendor_name">
+            </div>
+
+            <div class="input">
+                <label for="amount" class="text">Amount</label>
+                <input id="amount" type="text" placeholder="Amount (USD)" pInputText formControlName="amount">
+            </div>
+
+            <div class="input">
+                <label class="text">Category</label>
+                <p-select [options]="category_options" formControlName="categories" optionLabel="name" placeholder="Select Category" styleClass="w-full md:w-80" />
+            </div>
+
+            <button pButton pRipple label="Add Expenses" class="button" (click)="addExpenseClick();"></button>
+
+
+    </div>
+</div>

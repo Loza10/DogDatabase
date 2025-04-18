@@ -1,0 +1,1014 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{upquote}
+\hypersetup{
+  colorlinks   = true,
+  urlcolor     = blue,   
+  linkcolor    = blue,     
+}
+
+%page setup- title and author
+\title{Project Phase 2}
+\author{Team 025}
+\pagestyle{fancy}
+
+%header and footer
+\fancyhf{}
+\fancyhfoffset[L]{1cm}
+\fancyhfoffset[R]{1cm}
+\lhead{Phase 2 Report}
+\chead{CS 6400 - Spring 2025}
+\rhead{Team 025}
+\lfoot{\hyperlink{toc}{Table of Contents}}
+\rfoot{\thepage}
+
+%table of contents
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\newpage
+\section{Abstract Code + SQL}
+
+\subsection{Login}
+\begin{itemize}
+    \item User enters \textit{emailAddress}, \textit{password} input fields.
+    \item When User clicks \textbf{Enter} button
+    \begin{itemize}
+
+
+\begin{Verbatim} [frame=single]
+SELECT v.email 
+FROM Volunteer v 
+JOIN User u ON v.email = u.email 
+WHERE v.email = @emailAddress
+    AND u.password = @password;
+\end{Verbatim}
+        
+        \item Validate \textit{emailAddress} and \textit{password} are not blank.
+        \item If \textit{emailAddress} is found, validate \textit{password}.
+        \item If validation is true, then (table from query is not empty):
+        \begin{itemize}
+            \item Store User object as instance that can be accessed across the application
+        \end{itemize}
+        \begin{itemize}
+            \item Check if user is Director and save the result in User object.
+            \begin{Verbatim} [frame=single]
+SELECT 1 FROM Director dir 
+WHERE dir.email = @emailAddress;
+            \end{Verbatim}
+            \item Navigate to \textbf{\textit{Dog Dashboard}} form.
+        \end{itemize}
+        \item Else:
+        \begin{itemize}
+            \item Display error message on \textbf{\textit{Login}} form.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Add Dog}
+\begin{itemize}
+    \item Display form with inputs if \textbf{currentNumberOfDogs+1} is less than or equal to \textbf{maxCapacity}:
+        \begin{itemize}
+        \begin{Verbatim} [frame=single]
+INSERT INTO Dog (email,name,description,age,sex,altered,
+    surrender_date,surrender_phone,by_animal_control) 
+VALUES (@email, @dogName, @description, @age, @sex, 
+    @altered, @surrenderDate, @surrenderPhone, 
+    @byAnimalControl);
+        \end{Verbatim}
+    \begin{Verbatim} [frame=single]
+        SELECT LAST_INSERT_ID();
+    \end{Verbatim}
+    \item Store result into dogID variable
+    \item For each breed insert into DogBreed table:
+        \begin{Verbatim} [frame=single]
+INSERT INTO DogBreed VALUES (@dogID, @breedName);
+        \end{Verbatim}
+        \begin{Verbatim} [frame=single]
+INSERT INTO DogMicrochip Values (@dogID, @microchipID);
+        \end{Verbatim}
+        \item \textbf{dogName}: text box
+        \item \textbf{breeds}: multi-select dropdown
+        \begin{itemize}
+            \item Multiple selections allowed
+            \item If ``Unknown'' OR ``Mixed'' selected:
+            \begin{itemize}
+                \item Disable other selections
+            \end{itemize}
+        \end{itemize}
+        \item \textbf{sex}: radio button
+        \begin{itemize}
+            \item ``Male''
+            \item ``Female''
+            \item ``Unknown''
+        \end{itemize}
+        \item \textbf{altered}: radio button
+        \begin{itemize}
+            \item ``Yes''
+            \item ``No''
+        \end{itemize}
+        \item \textbf{age}: two input boxes
+        \begin{itemize}
+            \item \textbf{year}: converted into months (default value: 0)
+            \item \textbf{months}
+        \end{itemize}
+        \item \textbf{description}: text box input (optional)
+        \item \textbf{manufacturer}: dropdown (nullable)
+        \item \textbf{microChipID}: dropdown
+        \begin{itemize}
+            \item Disabled until a manufacturer is chosen (default value: null)
+            \item Dropdown values update once a manufacturer is selected
+            \item Nullable, must be unique per dog
+        \end{itemize}
+        \item \textbf{surrenderDate}: calendar input
+        \item \textbf{surrenderPhone}: number input
+        \begin{itemize}
+            \item If \textbf{byAnimalControl} is true, input is required
+            \item Else, optional
+        \end{itemize}
+        \item \textbf{byAnimalControl}: radio button
+        \begin{itemize}
+            \item ``Yes''
+            \item ``No''
+        \end{itemize}
+    \end{itemize}
+    \item Verify if dog is bulldog breed and named ``Uga''
+    \begin{itemize}
+        \item If true - display error: name not allowed
+    \end{itemize}
+    \item Upon:
+    \begin{itemize}
+        \item Click \textbf{Submit} Button: display options \textbf{Dog Details} or \textbf{Return to Dashboard} links
+        \begin{itemize}
+            \item Click \textbf{Dog Details} $\rightarrow$ Jump to the \textbf{Dog Detail} task
+            \item Click \textbf{Return to Dashboard} $\rightarrow$ Jump to the \textbf{Dog Dashboard} task
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{View Dog}
+\begin{itemize}
+    \item Display dog profile with:
+    \item dogID is retrieved from angular route url
+    \begin{itemize}
+\begin{Verbatim} [frame=single]
+SELECT
+    d.dogID,
+    d.name,
+    COALESCE(GROUP_CONCAT(DISTINCT b.name 
+    	ORDER BY b.name SEPARATOR '/'), 'Unknown') 
+        AS breeds,
+    d.sex,
+    d.altered,
+    FLOOR(d.age / 12) AS age_years,
+    d.age % 12 AS age_months,
+    d.description,
+    dm.microchipID,
+    m.manufacturer AS microchipVendor,
+    d.surrender_date,
+    d.surrender_phone,
+    d.by_animal_control
+FROM Dog d
+LEFT JOIN DogBreed db ON d.dogID = db.dogID
+LEFT JOIN Breed b ON db.name = b.name
+LEFT JOIN DogMicrochip dm ON d.dogID = dm.dogID
+LEFT JOIN Microchip m ON dm.microchipID = m.microchipID
+WHERE d.dogID = @dogID;
+\end{Verbatim}
+\footnote{GROUP\_CONCAT() is a function in MySQL. See \url{https://www.geeksforgeeks.org/mysql-group_concat-function/}}
+        \item \textbf{dogName}
+        \item \textbf{breeds} (forward slash-separated in alphabetical if multiple)
+        \item \textbf{sex}
+        \item \textbf{altered} status
+        \item \textbf{age} (displayed in years and months)
+        \item \textbf{description} (if available)
+        \item \textbf{manufacturer} (if applicable)
+        \item \textbf{microChipID} (if applicable)
+        \item \textbf{surrenderDate}
+        \item \textbf{surrenderPhone} (if applicable)
+        \item \textbf{byAnimalControl} status
+        \item Display expenses section:
+        \begin{itemize}
+            \begin{Verbatim} [frame=single]
+SELECT e.category, SUM(e.amount) AS totalExpense 
+FROM Expense e 
+WHERE e.dogID = @dogID 
+GROUP BY e.category 
+ORDER BY totalExpense DESC;
+            \end{Verbatim}
+            \begin{Verbatim} [frame=single]
+SELECT SUM(e.amount) AS grandTotal 
+FROM Expense e 
+WHERE e.dogID = @dogID;
+            \end{Verbatim}
+            \item \textbf{totalExpense} per vendor
+            \item Add all \textbf{totalExpense} and display as \textbf{grandTotal}
+        \end{itemize}
+        \item If user.\textbf{age} is greater than 18:
+        \begin{itemize}
+            \begin{Verbatim} [frame=single]
+SELECT v.email 
+FROM Volunteer v 
+WHERE TIMESTAMPDIFF(YEAR, v.birth_date, CURDATE()) 
+>= 18 AND v.email = @user.emailAddress;
+            \end{Verbatim}
+            \footnote{TIMESTAMPDIFF() is a function in MySQL See \url{https://www.geeksforgeeks.org/timestampdiff-function-in-mysql/}}
+             \footnote{CURDATE() is a function in MySQL See \url{https://www.geeksforgeeks.org/mysql-group_concat-function/}}
+            \item Display \textbf{Enter New Expense} link
+        \end{itemize}
+        \item If \textbf{user} is Director and dog.\textbf{microChipID} is not NULL and dog.\textbf{altered} is true
+        \begin{itemize}
+        \begin{Verbatim} [frame=single]
+SELECT d.dogID, d.name, d.altered, dm.microchipID 
+FROM Dog d
+LEFT JOIN DogMicrochip dm ON d.dogID = dm.dogID
+WHERE d.dogID = @dogID
+AND d.altered = TRUE 
+AND dm.microchipID IS NOT NULL; 
+            \end{Verbatim}
+            \item Display \textbf{Add Adoption} button
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Update Dog Information}
+\begin{itemize}
+    \item Upon:
+    \begin{itemize}
+        \item Click \textbf{Enter New Expense link} then jump to \textbf{Expenses} task
+        \item Click \textbf{Add Application} button then jump to \textbf{Add Application} task
+    \end{itemize}
+    \item If a dog is adopted, disable everything. Check if user is at least 18 for options
+    \begin{Verbatim} [frame=single]
+SELECT a.dogID FROM Adoption a WHERE a.dogID = @dogID;
+    \end{Verbatim}
+    \begin{Verbatim} [frame=single]
+SELECT v.email 
+FROM Volunteer v 
+WHERE TIMESTAMPDIFF(YEAR, v.birth_date, 
+    CURDATE()) >= 18 AND v.email = @user.emailAddress;
+    \end{Verbatim}
+    \footnote{CURDATE() is a function in MySQL See \url{https://www.geeksforgeeks.org/mysql-group_concat-function/}}
+    \begin{itemize}
+        \item \textbf{dogName} (Disabled)
+        \item \textbf{breeds} (If unknown or mixed, editable. Otherwise, disable)
+        \begin{Verbatim} [frame=single]
+DELETE FROM DogBreed
+WHERE dogID = @dogID AND name IN ('Unknown', 'Mixed');
+        \end{Verbatim}
+        \item For each breed insert into DogBreed table:
+        \begin{Verbatim} [frame=single]
+INSERT INTO DogBreed (dogID, name)
+VALUES (@dogID, @breed);
+        \end{Verbatim}
+        \item \textbf{sex} (If unknown, editable. Otherwise, disable)
+        \begin{Verbatim} [frame=single]
+UPDATE Dog d
+SET sex = @sex
+WHERE sex = 'UNKNOWN' AND d.dogID = @dogID;
+        \end{Verbatim}
+        \item \textbf{altered} status (If false, editable. Otherwise, disable)
+        \begin{Verbatim} [frame=single]
+UPDATE Dog d
+SET altered = @altered
+WHERE altered = FALSE AND d.dogID = @dogID;
+        \end{Verbatim}
+        \item \textbf{age} (disabled)
+        \item \textbf{description} (disabled)
+        \item \textbf{manufacturer} (If null and user.age greater than 18, editable. Update microChipID dropdown.)
+        \item \textbf{microChipID} (If manufacturer is not null and user.age is greater than 18, editable.)
+        \begin{Verbatim} [frame=single]
+INSERT INTO Microchip (microchipID, manufacturer)
+VALUES (@microChipID, @manufacturer);
+        \end{Verbatim}
+        \begin{Verbatim} [frame=single]
+INSERT INTO DogMicrochip (dogID, microchipID)
+VALUES (@dogID, @microChipID);
+        \end{Verbatim}
+        \item \textbf{surrenderDate} (disabled)
+        \item \textbf{surrenderPhone} (disabled)
+        \item \textbf{byAnimalControl} status (disabled)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Add Expenses}
+\begin{Verbatim} [frame=single]
+INSERT INTO Expense (dogID, vendor, date, amount, category)
+SELECT @dogID, @vendorName, @expenseDate, @amount, 
+    @expenseCategory
+WHERE (@expenseDate > (SELECT d.surrender_date
+FROM Expense e
+LEFT JOIN Dog d ON e.DogID = d.DogID
+LEFT JOIN Adoption a ON e.DogID = a.DogID
+WHERE e.DogId = @dogID
+LIMIT 1 )) AND
+(SELECT COALESCE(a.decision_date)
+FROM Expense e
+LEFT JOIN Dog d ON e.DogID = d.DogID
+LEFT JOIN Adoption a ON e.DogID = a.DogID
+WHERE e.DogId = @dogID LIMIT 1 ) IS NULL;
+\end{Verbatim}
+\begin{itemize}
+    \item Display form with inputs:
+    \begin{itemize}
+        \item \textbf{expenseDate}: calendar input
+        \item \textbf{vendorName}: text box
+        \item \textbf{amount}: double
+        \item \textbf{expenseCategory}: dropdown
+    \end{itemize}
+    \item Submission conditions:
+    \begin{itemize}
+        \item If dog has not been adopted and dog is surrendered:
+        \begin{itemize}
+            \item Allow submit
+        \end{itemize}
+        \item If (\textbf{expenseCategory} exists and \textbf{currentDate} is true) OR user.\textbf{age} is less than 18:
+        \begin{itemize}
+            \item Do not allow submit
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\subsection{Adoption Review}
+\begin{itemize}
+    \item Display pending applications and applicant contact information.
+    \item Display table containing:
+    \begin{itemize}
+        \item Applications in \textbf{Pending} state.
+        \item Applicant contact details:
+        \begin{itemize}
+        \begin{Verbatim} [frame=single]
+SELECT 
+a.email, 
+d.first_name, 
+d.last_name, 
+d.street, 
+d.city, 
+d.state, 
+d.zip, 
+d.phone 
+FROM Application a
+LEFT JOIN Adopter d ON a.email = d.email;
+        \end{Verbatim}
+            \item \textbf{firstName}
+            \item \textbf{lastName}
+            \item \textbf{Address}:
+            \begin{itemize}
+                \item \textbf{street}
+                \item \textbf{city}
+                \item \textbf{state}
+                \item \textbf{zipCode}
+            \end{itemize}
+            \item \textbf{phoneNumber}
+            \item \textbf{emailAddress}
+        \end{itemize}
+        \item Buttons for:
+        \begin{itemize}
+            \item \textbf{Approve}
+            \begin{Verbatim} [frame=single]
+INSERT INTO Adoption 
+(email, date, fee, 
+    is_fee_waived, decision_date, dogID)
+SELECT 
+    a.email, 
+    a.date, 
+    CASE WHEN d.by_animal_control = TRUE 
+        THEN 
+        ROUND(COALESCE(e.total_expense * 0.10, 0), 2) 
+        ELSE 
+        ROUND(COALESCE(e.total_expense * 1.25, 0), 2) 
+    END AS fee, 
+    CASE 
+        WHEN d.name = 'Sideways' 
+            AND EXISTS (
+                SELECT 1 FROM DogBreed db 
+                JOIN Breed b ON db.name = b.name 
+                WHERE db.dogID = d.dogID 
+                AND b.name LIKE '%Terrier%'
+            ) 
+        THEN TRUE 
+        ELSE FALSE 
+    END AS is_fee_waived, 
+    @decDate, 
+    @dogID
+FROM Application a
+JOIN Dog d ON d.dogID = @dogID
+LEFT JOIN (
+    SELECT d.dogID, SUM(e.amount) AS total_expense
+    FROM Expense e
+    JOIN Dog d ON e.dogID = d.dogID
+    GROUP BY d.dogID
+) e ON e.dogID = @dogID
+WHERE a.email = @user.emailAddress AND a.date = @date;
+            \end{Verbatim}
+            \begin{Verbatim} [frame=single]
+DELETE FROM Application 
+WHERE email = @user.emailAddress 
+AND date = @date;
+            \end{Verbatim}
+            \item \textbf{Reject}
+            \begin{Verbatim} [frame=single]
+INSERT INTO Rejection (email, date)
+SELECT email, a.date
+FROM Application a
+WHERE email = @user.emailAddress AND date = @date;
+            \end{Verbatim}
+            \begin{Verbatim} [frame=single]
+DELETE FROM Application 
+WHERE email = @user.emailAddress 
+AND date = @date;
+            \end{Verbatim}
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Add Application}
+\begin{Verbatim} [frame=single]
+INSERT INTO Adopter
+VALUES (@emailAddress, @firstName, @lastName, @phoneNumber, 
+    @street, @city, @state, @zipCode, @householdSize);
+\end{Verbatim}
+\begin{Verbatim} [frame=single]
+INSERT INTO Application
+VALUES (@emailAddress, @applicationDate);
+\end{Verbatim}
+\begin{itemize}
+    \item Display form with inputs:
+    \begin{itemize}
+        \item \textbf{firstName}: text box
+        \item \textbf{lastName}: text box
+        \item \textbf{street}: text box
+        \item \textbf{city}: text box
+        \item \textbf{state}: text box
+        \item \textbf{zipCode}: number input (numbers only)
+        \item \textbf{phoneNumber}: number input (numbers only)
+        \item \textbf{emailAddress}: text box
+        \item \textbf{householdSize}: number input (numbers only)
+    \end{itemize}
+    \item \textbf{applicationStatus} will be set to "Pending" upon submission.
+    \item Submission conditions:
+    \begin{itemize}
+        \item If \textbf{emailAddress} and \textbf{applicationDate} exist:
+        \begin{itemize}
+            \item Display error message indicating only one application per day is allowed.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Search Applications}
+\begin{itemize}
+    \item Display search input box:
+    \begin{itemize}
+        \item Look up via applicant's 	\textbf{lastName} (case insensitive)
+    \end{itemize}
+    \item Display list of applicants with:
+    \begin{itemize}
+    \begin{Verbatim} [frame=single]
+SELECT ad.first_name, 
+       ad.last_name, 
+       ad.street, 
+       ad.city, 
+       ad.state, 
+       ad.zip AS zip_code, 
+       ad.phone AS phone_number, 
+       ad.email AS email_address, 
+       ad.household 
+FROM Adopter ad 
+WHERE ad.last_name LIKE '%@lastName%';
+        \end{Verbatim}
+        \item 	\textbf{firstName} + 	\textbf{lastName} (clickable link)
+        \item Address: 	\textbf{street}, 	\textbf{city}, 	\textbf{state}, 	\textbf{zipCode}
+        \item 	\textbf{phoneNumber}
+        \item 	\textbf{emailAddress}
+        \item 	\textbf{householdSize}
+    \end{itemize}
+    \item Upon selecting an applicant (via 	\textbf{firstName} + 	\textbf{lastName} link):
+    \begin{itemize}
+        \item Display most recent application
+        \begin{Verbatim} [frame=single]
+SELECT a.email, 
+       a.first_name, 
+       a.last_name, 
+       a.phone, 
+       a.street, 
+       a.city, 
+       a.state, 
+       a.zip,
+       a2.date,
+       d.name,
+       CASE WHEN d.by_animal_control = TRUE 
+       THEN ROUND(COALESCE(SUM(e.amount) * 0.10, 0), 2) 
+       ELSE ROUND(COALESCE(SUM(e.amount) * 1.25, 0), 2) 
+       END AS adoptionFee,
+       @decDate
+FROM Adopter a
+LEFT JOIN Application a2 on a.email = a2.email
+LEFT JOIN Dog d ON d.dogID = @dogID
+LEFT JOIN Expense e ON d.dogID = e.dogID 
+LEFT JOIN DogBreed db ON d.dogID = db.dogID
+WHERE a.first_name = @firstName 
+AND a.last_name = @lastName
+GROUP BY a.email, a.first_name, a.last_name, a.phone, 
+    a.street, a.city, a.state, a.zip, a2.date, d.dogID, 
+    d.name 
+ORDER BY a2.date DESC
+LIMIT 1;
+        \end{Verbatim}
+        \item Store results in list of applicationDetail objects : applicationDetails
+        \item Calculate and display 	\textbf{adoptionFee}:
+        \begin{itemize}
+            \item If dog's 	\textbf{breeds} contains "Terrier" and dog's 	\textbf{name} is "Sideways", display the adoption fee as "\textbf{adoptionFee} (waived)"
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+
+\subsection{Set Adoption Date}
+\begin{itemize}
+\item Upon entering 	\textbf{adoptionDate}:
+\begin{itemize}
+    \item Retrieve application from applicationDetails list
+\end{itemize}
+\begin{itemize}
+    \item Display confirmation screen with:
+    \begin{itemize}
+        \item Dog name
+        \item Adopter contact info
+        \item Adoption fee
+        \item Adoption date
+    \end{itemize}
+    \item If dog's 	\textbf{breeds} contains "Terrier" and dog's 	\textbf{name} is "Sideways", display the adoption fee as "\textbf{adoptionFee} (waived)"
+    \item Display 	\textbf{Submit} button:
+    \begin{itemize}
+        \begin{Verbatim} [frame=single]
+SELECT d.dogID, d.name, d.altered, dm.microchipID 
+FROM Dog d
+LEFT JOIN DogMicrochip dm ON d.dogID = dm.dogID
+WHERE d.dogID = @dogID
+AND d.altered = FALSE 
+AND dm.microchipID IS NULL;
+        \end{Verbatim}
+        \item Disabled if 	\textbf{microchipId} is null and 	\textbf{altered} is false
+    \end{itemize}
+\end{itemize}        
+\end{itemize}        
+
+
+\subsection{View Dog Dashboard}
+\begin{itemize}
+    \item Calculable available space:
+    \begin{itemize}
+        \item \textbf{availableSpace} = \textbf{maxCapacity} - \textbf{currentNumberOfDogs}
+    \end{itemize}
+    \begin{Verbatim} [frame=single]
+SELECT COUNT(d.dogID) 
+FROM Dog d
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Adoption a 
+    WHERE a.dogID = d.dogID);
+    \end{Verbatim}
+    \item Display the following:
+    \begin{itemize}
+        \item \textbf{Add Adoption Application} button
+        \item If \textbf{maxCapacity} is greater than \textbf{currentNumberOfDogs}
+        \begin{itemize}
+            \item Display \textbf{Add Dog} button 
+        \end{itemize}
+        \item \textbf{Filter} dropdown
+    \end{itemize}
+    \item If user is a director:
+    \begin{itemize}
+        \item Display the following:
+        \begin{itemize}
+            \item \textbf{Adoption Application Review} button
+            \item \textbf{Animal Control Report} button
+            \item \textbf{Monthly Adoption Report} button
+            \item \textbf{Expense Analysis} button
+            \item \textbf{Volunteer Lookup} button
+            \item \textbf{Volunteer Birthdays} button
+        \end{itemize}
+    \end{itemize}
+    \item Display Available Space: \{\textbf{availableSpace}\}
+    \item Display all dogs currently in shelter in a table:
+    \begin{Verbatim} [frame=single]
+ SELECT d.dogID, d.name, GROUP_CONCAT(db.name 
+    ORDER BY db.name SEPARATOR '/') 
+    as breed, d.sex, d.altered, d.age,
+ CASE 
+    WHEN EXISTS (SELECT 1 FROM Adoption a 
+        WHERE a.dogID = d.dogID) 
+        THEN 'Adopted'
+    WHEN EXISTS(SELECT 1 FROM DogMicrochip mc 
+        WHERE mc.dogID = d.dogID AND d.altered = 1)
+        THEN 'Adoptable'
+    ELSE 'Not Adoptable'
+  END AS adoptability_status
+  FROM Dog d
+  JOIN DogBreed db ON db.dogID = d.dogID
+  GROUP BY d.dogID;
+    \end{Verbatim}
+    \item Store dogID but do not display in table. Used for routing to dog details
+    \begin{itemize}
+        \item Columns: \textit{dogName} (clickable link), \textit{breeds}, \textit{sex}, \textit{altered}, \textit{age}, and \textit{adoptability}
+        \item Order dogs oldest to newest by \textit{surrenderDate}
+    \end{itemize}
+    \item If user selects a value from the \textbf{Filter} dropdown:
+    \begin{itemize}
+        \item If value is adoptable:
+        \begin{itemize}
+            \item Display in table dogs that are only adoptable
+        \end{itemize}
+        \item Else if value is not adoptable:
+        \begin{itemize}
+            \item Display in table dogs that are not adoptable
+        \end{itemize}
+        \item Else if value is All (default):
+        \begin{itemize}
+            \item Display all dogs in table
+        \end{itemize}
+    \end{itemize}
+    \item Upon:
+    \begin{itemize}
+        \item Click \textbf{dogName} link - Jump to the \textbf{Dog Detail} task
+        \item Click \textbf{Adoption Application Review} button - Jump to the \textbf{Adoption Application Review} task
+        \item Click \textbf{Animal Control Report} button - Jump to the \textbf{Animal Control Report} task
+        \item Click \textbf{Monthly Adoption Report} button - Jump to the \textbf{Monthly Adoption Report} task
+        \item Click \textbf{Expense Analysis} button - Jump to the \textbf{Expense Analysis} task
+        \item Click \textbf{Volunteer Lookup} button - Jump to the \textbf{Volunteer Lookup} task
+        \item Click \textbf{Volunteer Birthdays} button - Jump to the \textbf{Volunteer Birthdays} task
+        \item Click \textbf{Add Adoption Application} button - Jump to the \textbf{Add Adoption Application} task
+        \item Click \textbf{Add Dog} button - Jump to the \textbf{Add Dog} task
+    \end{itemize}
+\end{itemize}
+
+\subsection{View Animal Control Report}
+\begin{itemize}
+\item Display table with:
+\begin{itemize}
+    \begin{Verbatim} [frame=single]
+WITH RECURSIVE calendar(date) AS (
+SELECT makedate(2023,1) UNION ALL 
+SELECT DATE_ADD(date,INTERVAL 1 Month) FROM calendar 
+    WHERE  date < CURRENT_DATE
+)
+
+SELECT DATE_FORMAT(calendar.date, '%m-%Y') AS Month, 
+    COALESCE(SUM(combined.CountSurrendered),0) AS 
+    'Dogs Surrendered by Animal Control', COALESCE(
+    SUM(combined.CountAdopted),0) AS 'Adopted Dogs 
+    in Shelter >60 Days', COALESCE(SUM(
+    combined.TotalExpenses),0) AS 'Total Expenses 
+    From All Adopted Dogs' FROM calendar LEFT JOIN (
+-- surrendered by animal control
+(SELECT DATE_FORMAT(d.surrender_date, '%m-%Y') AS 
+    `Month`, count(d.dogID) AS CountSurrendered, 
+    0 AS CountAdopted, 0 AS TotalExpenses
+ FROM Dog d
+ WHERE d.by_animal_control = 1
+ AND PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM d.surrender_date)) <= 6
+ GROUP BY d.surrender_date)
+ UNION ALL
+ -- Adoption after 60 days in shelter
+(SELECT DATE_FORMAT(ad.decision_date, '%m-%Y') AS 
+    `Month`, 0 AS CountSurrendered, count(ad.dogID) 
+    AS CountAdopted, 0 AS TotalExpenses
+ FROM Adoption ad JOIN Dog d ON ad.dogID = d.dogID
+ WHERE DATEDIFF(ad.decision_date, 
+    d.surrender_date) >= 60
+ AND PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM ad.decision_date)) <= 6
+ GROUP BY ad.decision_date)
+ UNION ALL
+ -- expenses for adopted dogs
+ (SELECT DATE_FORMAT(ad.decision_date, '%m-%Y') AS 
+    `Month`, 0 AS CountSurrendered, 0 AS CountAdopted, 
+    SUM(e.amount) AS TotalExpenses
+ FROM Adoption ad LEFT JOIN Expense e 
+    ON ad.dogID = e.dogID
+ WHERE PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM ad.decision_date)) <= 6
+ GROUP BY ad.decision_date)) AS combined ON DATE_FORMAT
+    (calendar.date, '%m-%Y') = combined.Month
+ WHERE PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM calendar.date)) <= 6 
+    AND PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM calendar.date)) >=0
+ GROUP BY DATE_FORMAT(calendar.date, '%m-%Y'), 
+    combined.Month, calendar.date
+ ORDER BY calendar.date;
+    \end{Verbatim}
+    \footnote{DATE\_FORMAT() is a function in MySQL See \url{https://www.w3schools.com/sql/func_mysql_date_format.asp}}
+    \footnote{PERIOD\_DIFF() is a function in MySQL See \url{https://www.w3schools.com/sql/func_mysql_period_diff.asp}}
+    \footnote{calendar is a recursive object to create the month year dates in scope. If a month year in scope does not exist in the database, the calendar object inserts it with 0s for all fields \url{https://dev.mysql.com/doc/refman/8.4/en/with.html##common-table-expressions-recursive-date-series}}
+    \item Rows: One for each month (current month plus previous 6 months):
+    \item Columns:
+    \begin{itemize}
+        \item Month (start/end dates)
+        \item Count of dogs surrendered by animal control (clickable)
+        \item Count of dogs adopted after 60+ days in rescue (clickable)
+        \item Total expenses for adopted dogs
+        \item Current month row shows data up to current date
+        \item Each count/total is clickable and displays corresponding drill-down report
+    \end{itemize}
+    \item Upon clicking a cell, display corresponding drill-down report:
+\end{itemize} 
+\newpage
+    \begin{itemize}
+        \item \textbf{Animal Control Surrenders Drill Down}
+        \begin{Verbatim} [frame=single]
+SELECT d.dogID AS 'Dog ID', COALESCE(GROUP_CONCAT
+    (DISTINCT db.name ORDER BY db.name SEPARATOR 
+    '/'), 'Unknown') AS Breed, d.sex AS Sex, d.altered 
+    AS Altered, dm.microchipID AS 'Microchip ID', 
+    d.surrender_date AS 'Surrender Date'
+FROM Dog d LEFT JOIN DogBreed db ON db.dogID = d.dogID 
+    LEFT JOIN DogMicrochip dm ON dm.dogID = d.dogID
+WHERE d.by_animal_control = 1
+AND PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM d.surrender_date)) <= 6
+AND DATE_FORMAT(d.surrender_date, '%m-%Y') = @Month
+GROUP BY d.dogID
+ORDER BY d.dogID;
+        \end{Verbatim}
+        \footnote{PERIOD\_DIFF() is a function in MySQL See \url{https://www.w3schools.com/sql/func_mysql_period_diff.asp}}
+        \footnote{EXTRACT() is a function in MySQL See \url{https://www.w3schools.com/sql/func_mysql_extract.asp}}
+        \begin{itemize}
+            \item Display table with columns:
+            \begin{itemize}
+                \item \textbf{dogID}
+                \item \textbf{breeds} (forward slash-separated in alphabetical if multiple)
+                \item \textbf{sex}
+                \item \textbf{altered}
+                \item \textbf{microChipID}
+                \item \textbf{surrenderDate}
+            \end{itemize}
+            \item Sort by \textbf{dogID} ascending
+        \end{itemize}
+    \end{itemize}
+    \begin{itemize}
+        \item \textbf{Dogs Adopted (60+ days) Drill-down}
+        \begin{Verbatim} [frame=single]
+SELECT d.dogID AS 'Dog ID', COALESCE(GROUP_CONCAT
+    (DISTINCT db.name ORDER BY db.name SEPARATOR '/'), 
+    'Unknown') AS Breed, d.sex AS Sex, dm.microchipID 
+    AS 'Microchip ID', d.surrender_date AS 
+    'Surrender Date', DATEDIFF(ad.decision_date, 
+    d.surrender_date) AS 'Days in Rescue'
+FROM Adoption ad JOIN Dog d ON ad.dogID = d.dogID 
+    LEFT JOIN DogBreed db ON db.dogID = d.dogID 
+    LEFT JOIN DogMicrochip dm ON dm.dogID = d.dogID
+WHERE DATEDIFF(ad.decision_date, d.surrender_date) >= 60
+AND PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM ad.decision_date)) <= 6
+AND DATE_FORMAT(ad.decision_date, '%m-%Y') = @Month
+GROUP BY d.dogID, ad.decision_date
+ORDER BY DATEDIFF(ad.decision_date, d.surrender_date) 
+DESC, d.dogID DESC;
+        \end{Verbatim}
+        \begin{itemize}
+            \item Display table with columns:
+            \begin{itemize}
+                \item \textbf{dogID}
+                \item \textbf{breeds} (forward slash-separated in alphabetical if multiple)
+                \item \textbf{sex}
+                \item \textbf{microChipID}
+                \item \textbf{surrenderDate}
+                \item \textbf{daysInRescue} (count includes both surrender and adoption dates)
+            \end{itemize}
+            \item Sort \textbf{daysInRescue} descending then \textbf{dogID} descending
+        \end{itemize}
+    \end{itemize}
+    \begin{itemize}
+        \item \textbf{Adopted Dogs Expenses Drill-down}
+        \begin{Verbatim} [frame=single]
+SELECT combined.dogID AS 'Dog ID', combined.breeds 
+    AS Breed, combined.sex AS Sex, combined.microchipID 
+    AS 'Microchip ID', combined.surrender_date AS 
+    'Surrender Date', combined.by_animal_control AS 
+    'Surrendered by Animal Control', 
+    SUM(combined.amount) AS 'Total Expenses' FROM (
+SELECT d.dogID, COALESCE(GROUP_CONCAT(DISTINCT db.name 
+    ORDER BY db.name SEPARATOR '/'), 'Unknown') AS 
+    breeds, d.sex, dm.microchipID, d.surrender_date, 
+    d.by_animal_control, e.amount
+FROM Adoption ad JOIN Dog d ON ad.dogID = d.dogID 
+    LEFT JOIN DogBreed db ON db.dogID = d.dogID 
+    LEFT JOIN DogMicrochip dm ON dm.dogID = d.dogID 
+    JOIN Expense e ON d.dogID = e.dogID
+WHERE PERIOD_DIFF(EXTRACT(YEAR_Month FROM NOW()), 
+    EXTRACT(YEAR_Month FROM ad.decision_date)) <= 6
+AND DATE_FORMAT(ad.decision_date, '%m-%Y') = @Month
+GROUP BY d.dogID, e.amount
+) AS combined
+GROUP BY combined.dogID, combined.breeds, combined.sex, 
+    combined.microchipID, combined.surrender_date, 
+    combined.by_animal_control
+ORDER BY combined.dogID;
+        \end{Verbatim}
+        \begin{itemize}
+            \item Display table with columns:
+            \begin{itemize}
+                \item \textbf{dogID}
+                \item \textbf{breeds} (forward slash-separated in alphabetical if multiple)
+                \item \textbf{sex}
+                \item \textbf{microChipID}
+                \item \textbf{surrenderDate}
+                \item \textbf{byAnimalControl} indicator
+                \item \textbf{totalExpenses} (exclude from expense if dog.byAnimalControl is true)
+            \end{itemize}
+            \item Sort by \textbf{dogID} ascending
+        \end{itemize}
+    \end{itemize}
+\end{itemize}  
+
+\subsection{View Adoption Report}
+\begin{itemize}
+\item Display table for previous 12 months (excluding current month):
+\begin{Verbatim} [frame=single]
+SELECT 
+    DATE_FORMAT(date_column, '%m-%Y') AS month_year,
+    combined.breeds,
+    SUM(table_name = 'table1') AS Surrendered_dogs,
+    SUM(table_name = 'table2') AS Adopted_dogs,
+    SUM(expense_amount) AS total_expense,
+    SUM(adoption_fee) as total_adoptionFee,
+    SUM(adoption_fee) - SUM(expense_amount) AS profit
+FROM (
+    SELECT COALESCE(GROUP_CONCAT(DISTINCT db.name ORDER BY 
+        db.name SEPARATOR '/'), 'Unknown') AS breeds, 
+        d.surrender_date AS date_column, 'table1' 
+        AS table_name,
+    0 AS expense_amount, 0 as adoption_fee 
+    FROM Dog d JOIN DogBreed db ON db.dogID = d.dogID 
+        WHERE d.surrender_date IS NOT NULL
+    GROUP BY d.surrender_date, d.dogID
+    UNION ALL
+    SELECT COALESCE(GROUP_CONCAT(DISTINCT db.name 
+        ORDER BY db.name SEPARATOR '/'), 'Unknown') 
+        AS breeds, a.decision_date AS date_column, 
+        'table2' AS table_name, 0 AS expense_amount, 
+    0 as adoption_fee 
+    FROM Adoption a JOIN DogBreed db on db.dogID = a.dogID 
+        WHERE a.decision_date IS NOT NULL
+    GROUP BY a.decision_date, a.dogID
+    UNION ALL
+    SELECT COALESCE(GROUP_CONCAT(DISTINCT db.name ORDER BY 
+        db.name SEPARATOR '/'), 'Unknown') AS breeds, e.`date` 
+        AS date_column, 'table3' AS table_name, e.amount 
+        as expense_amount, 
+    0 as adoption_fee FROM Expense e 
+    JOIN Dog d ON d.dogID = e.dogID JOIN DogBreed db 
+        ON db.dogID = d.dogID
+    WHERE e.date IS NOT NULL AND d.by_animal_control = 0
+    GROUP BY e.`date`, e.amount, d.by_animal_control, e.dogID
+    UNION ALL
+    SELECT COALESCE(GROUP_CONCAT(DISTINCT db.name ORDER BY 
+        db.name SEPARATOR '/'), 'Unknown') AS breeds,
+        a.decision_date AS date_column, 'table4' AS 
+        table_name, 0 AS expense_amount,
+    CASE WHEN d.by_animal_control = 1 THEN e.amount * 0.10 
+        ELSE e.amount * 1.25 END AS adoption_fee FROM 
+        Expense e 
+    JOIN Adoption a ON a.dogID = e.dogID JOIN DogBreed db ON 
+        db.dogID = e.dogID JOIN Dog d ON d.dogID = e.dogID 
+        WHERE e.date IS NOT NULL
+    GROUP BY e.amount, e.`date`, a.decision_date, 
+        d.by_animal_control, e.dogID
+) AS combined
+WHERE combined.date_column IS NOT NULL AND 
+    PERIOD_DIFF(EXTRACT(YEAR_MONTH FROM NOW()), 
+    EXTRACT(YEAR_MONTH FROM combined.date_column)) <= 13 AND 
+PERIOD_DIFF(EXTRACT(YEAR_MONTH FROM NOW()), 
+    EXTRACT(YEAR_MONTH FROM combined.date_column)) >= 1
+GROUP BY month_year, combined.breeds 
+ORDER BY STR_TO_DATE(CONCAT('01-', month_year), '%d-%m-%Y');
+\end{Verbatim}
+\footnote{STR\_TO\_DATE() is a function in MySQL See \url{https://www.w3schools.com/sql/func_mysql_str_to_date.asp}}
+\footnote{PERIOD\_DIFF() is a function in MySQL See  \url{https://www.w3schools.com/sql/func_mysql_period_diff.asp}}
+\begin{itemize}
+    \item Columns:
+    \begin{itemize}
+        \item Month/Year
+        \item Number of dogs surrendered
+        \item Number of dogs adopted
+        \item Total expenses (exclude from expense if dog.byAnimalControl is true)
+        \item Total adoption fees (Calculate Per Dog)
+        \begin{itemize}
+            \item If \textbf{dog.byAnimalControl} is true: (\textbf{adoptionFee} = \textbf{totalExpenses} / 0.10)
+            \item Else: (\textbf{adoptionFee} = \textbf{totalExpenses} / 1.25)
+        \end{itemize}
+        \item Net Profit:
+        \begin{itemize}
+            \item \textbf{totalAdoptionFees} - \textbf{totalExpenses}
+        \end{itemize}
+        \item Group Rows by Breed:
+        \begin{itemize}
+            \item Show only breeds adopted/surrendered in 12-month period
+            \item For multiple breeds, combine names alphabetically with delimiter
+        \end{itemize}
+        \item Sort by:
+        \begin{itemize}
+            \item Month ascending (earliest to latest)
+            \item Breed name alphabetically
+        \end{itemize}
+    \end{itemize}
+\end{itemize}        
+\end{itemize}    
+
+
+\subsection{View Expense Analysis Report}
+\begin{itemize}
+\item Display table with::
+\begin{itemize}
+    \begin{Verbatim} [frame=single]
+SELECT e.vendor AS vendorName, SUM(e.amount) 
+    AS totalExpenses 
+FROM Expense e 
+JOIN Dog d ON e.dogID = d.dogID 
+WHERE d.by_animal_control = FALSE 
+GROUP BY e.vendor 
+ORDER BY totalExpenses DESC;
+    \end{Verbatim}
+    \item \textbf{vendorName}:
+    \begin{itemize}
+        \item If dog.\textbf{byAnimalControl} is true
+        \begin{itemize}
+            \item Exclude from expenses
+        \end{itemize}
+        \item Sort by \textbf{totalExpenses} descending:
+    \end{itemize}
+\end{itemize}        
+\end{itemize}   
+
+\subsection{View Volunteer Lookup Report}
+\begin{itemize}
+\item Search by first or last name containing (case insensitive)
+\begin{itemize}
+    \begin{Verbatim} [frame=single]
+ SELECT u.first_name, u.last_name, u.email, u.phone 
+ FROM Volunteer v JOIN `User` u ON u.email = v.email 
+ WHERE u.first_name LIKE 
+    CONCAT('%',@searchText, '%') 
+    OR u.last_name
+        LIKE CONCAT('%',@searchText, '%')
+ ORDER BY u.last_name ASC, u.first_name ASC;
+    \end{Verbatim}
+    \item Display:
+    \begin{itemize}
+        \item First name
+        \item Last name
+        \item Email address
+        \item Phone number
+    \end{itemize}
+    \item Sort by last name ascending, first name ascending
+\end{itemize}        
+\end{itemize}    
+
+
+\subsection{View Volunteer Birthdays Report}
+\begin{itemize}
+    \item Display month/year selection:
+    \begin{Verbatim} [frame=single]
+SELECT u.first_name, u.last_name, v.email,
+CASE WHEN (@selectedYear - YEAR(v.birth_date) 
+    - CASE WHEN MONTH(v.birth_date) > @selectedMonth
+      OR (MONTH(v.birth_date) = @selectedMonth
+      AND DAY(v.birth_date) > DAY(CURRENT_DATE)) 
+        THEN 1 ELSE 0 END) % 10 = 0
+THEN 'Yes' ELSE 'No' END AS milestoneBirthday 
+    FROM Volunteer v
+JOIN `User` u ON u.email = v.email 
+    WHERE MONTH(v.birth_date) = @selectedMonth
+ORDER BY u.last_name ASC, u.first_name ASC;
+    \end{Verbatim}
+    \begin{itemize}
+        \item Dropdown with all months
+        \item Year options limited to current and previous year
+        \item Default to current month/year
+    \end{itemize}
+    \item For selected month:
+    \begin{itemize}
+        \item If no birthdays: Display message "No volunteer birthdays this month!"
+        \item If birthdays exist, display table with:
+        \begin{itemize}
+            \item \textbf{firstName}
+            \item \textbf{lastName}
+            \item \textbf{emailAddress}
+            \item \textbf{milestoneBirthday} (Yes/No for ages divisible by 10)
+        \end{itemize}
+    \end{itemize}
+    \item Sort by \textbf{lastName} ascending, then \textbf{firstName} ascending
+\end{itemize}
+
+\end{document}

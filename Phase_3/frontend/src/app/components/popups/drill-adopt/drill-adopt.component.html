@@ -1,0 +1,57 @@
+<div class="background">
+    <div class="container">
+        <div class="card-header">
+            <h2>Adopted Dogs in the Rescue for 60+ days ({{this.monthYear}})</h2>
+          </div>
+        
+          <div class="card-body">
+            <p-table
+              [value]="drillAdoptReport"
+              [paginator]="true"
+              [rows]="10"
+              [showCurrentPageReport]="true"
+              [tableStyle]="{ 'min-width': '50rem' }"
+              styleClass="p-datatable-striped"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="dogID">
+                    Dog ID
+                  </th>
+                  <th pSortableColumn="breeds">
+                    Breeds
+                  <th pSortableColumn="sex">
+                    Sex
+                  </th>
+                  <th pSortableColumn="microchipID">
+                    Microchip ID
+                  </th>
+                  <th pSortableColumn="surrenderDate">
+                    Surrender Date
+                  </th>
+                  <th pSortableColumn="daysInRescue">
+                    Days in Rescue
+                  </th>
+                </tr>
+              </ng-template>
+        
+              <ng-template pTemplate="body" let-r>
+                <tr>
+                  <td>{{ r.dogID }}</td>
+                  <td>{{ r.breeds }}</td>
+                  <td>{{ r.sex }}</td>
+                  <td>{{ r.microchipID }}</td>
+                  <td>{{ r.surrenderDate }}</td>
+                  <td>{{ r.daysinRescue }}</td>
+                </tr>
+              </ng-template>
+        
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="7" class="text-center">No records found</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+    </div>
+</div>

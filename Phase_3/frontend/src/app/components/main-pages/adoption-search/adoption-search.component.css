@@ -1,0 +1,46 @@
+.input{
+    display: flex;
+    flex-direction:column;
+    margin-bottom:0.8rem;
+    margin-top:0.8rem;
+}
+
+#vol_name{
+    width: 20rem;
+}
+.drill {
+    color: var(--p-primary-color);
+    text-decoration: none;
+    cursor:pointer;
+}
+
+.dialog{
+    width:25rem;
+}
+
+.centered{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top:1rem;
+}
+
+.section_horizontal{
+    display:flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+p,.text{
+    font-weight:bold;
+}
+
+button{
+    margin-left:0.5rem;
+    margin-right:0.5rem;
+}
+
+#cancel{
+    background-color:  var(--p-surface-ground);
+    color: var(--p-primary-color);
+}

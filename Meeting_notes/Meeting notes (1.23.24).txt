@@ -1,0 +1,114 @@
+﻿1.23.24 Meeting notes:
+
+
+1. Information Flow Diagram (IFD) Notes
+
+
+[QUESTION]: Do we need Database to point to login on IRD? Ie if we were register a user?
+Answer: Yes, we need Database to point to login
+
+
+
+
+[QUESTION]: Do users have to register an account? 
+Answer: 
+1. Ask on canvas
+2. Document says “First version of this application does not need a user interface for user management” -> SO we think there is no need for registration system yet
+
+
+
+
+[QUESTION]: In dog details, we are unsure if “Expenses” would be a property of dog
+Answer:
+1. Review later
+
+
+
+
+[ACTION NEEDED] In Adoption, we need to add a “View Adoption Applications” as we send information to the database but we also need to read from the database (“selects adopter from search results”)
+
+
+
+
+[ACTION NEEDED] In Adoption Review Form, we need the arrows to be bidirectional because we are sending to the database but also need to read data from the database as well
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+II. EER Diagram Notes
+
+
+
+
+[ACTION NEEDED] In User, we need to check if Age needs to be included in the diagram or if that’s for later in the pseudocode/code where we check if a user’s age is >18.
+
+
+[ACTION NEEDED] In User, check if we need an isAdmin feature or its own separate entity
+
+
+[ACTION NEEDED] In Age, we have to double check if a puppy is less than 12 months, we need to display by months in UI. If age > 12 months then we should display years. Have an input box for years and months to track this easily
+
+
+[ACTION NEEDED] Need a microchip table. 
+
+
+[QUESTION] In Adopter, not sure if we need to include AdopterName based on a lecture video’s diagramming rules
+
+
+[ACTION NEEDED] In Application, we need to add Application Creation Date, Decision Date
+
+
+[ACTION NEEDED] In Application, we need an unique application ID of some sort. Email + Creation date could be a composite primary key as well 
+
+
+[ACTION NEEDED] In Expenses, need to add date of expense, name of vendor, amount of the expense, expense category. Vendor and Date can be a key / id. 
+
+
+[ACTION NEEDED] In Expenses, the type of expense should be its own table
+
+
+[ACTION NEEDED] Vendors might be another table as well
+
+
+[ACTION NEEDED] In Expense category will be its own category
+
+
+
+
+II. Document
+* Data Types (5%) - Josie
+* Business Logic Constraints (logic which cannot be reflected in the EER model) (5%) - Tommy
+* Task Decomposition (TD): rules of thumb/oval diagrams- both single and decomposed (10%) - Zakk
+* Abstract Code (AC) pseudo-code: input validation/error handling, how to navigate between tasks (30%) - Vedran

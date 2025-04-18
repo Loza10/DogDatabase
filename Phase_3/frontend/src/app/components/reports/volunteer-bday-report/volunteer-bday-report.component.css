@@ -1,0 +1,8 @@
+#input{
+    margin-left:0.5rem;
+    margin-right:1.5rem;
+}
+.material-icons {
+    font-size: 2.5rem;
+    color: var(--p-primary-color);
+}

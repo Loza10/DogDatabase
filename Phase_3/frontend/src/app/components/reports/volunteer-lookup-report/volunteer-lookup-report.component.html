@@ -1,0 +1,60 @@
+<div>
+  <a [routerLink]="'/dog-dashboard'">
+    <span class="material-icons">pets</span>
+  </a>
+</div>
+<div id="main">
+  <div class="card">
+    <div class="card-header">
+      <h2>Volunteer Lookup Report</h2>
+    </div>
+
+    <div class="input">
+      <label for="vol_name" class="text">Search for Volunteer</label>
+      <input
+        id="vol_name"
+        type="text"
+        placeholder="Name"
+        pInputText
+        formControlName="vol_name"
+        (input)="updateReport($event)"
+      />
+    </div>
+
+    <div class="card-body">
+      <p-table
+        [value]="report"
+        [paginator]="false"
+        [rows]="7"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        styleClass="p-datatable-striped"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="firstName">First Name</th>
+            <th pSortableColumn="lastName">Last Name</th>
+            <th pSortableColumn="emailAddress">Email</th>
+
+            <th pSortableColumn="phone">Phone</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-r>
+          <tr>
+            <td>{{ r.firstName }}</td>
+            <td>{{ r.lastName }}</td>
+            <td>{{ r.emailAddress }}</td>
+            <td>{{ r.phone }}</td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" class="text-center">No records found</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

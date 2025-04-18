@@ -1,0 +1,116 @@
+.input{
+    display: flex;
+    flex-direction:column;
+    margin-bottom:0.8rem;
+}
+.input_secondary{
+    display: flex;
+    flex-direction:column;
+    margin-bottom:0.8rem;
+    margin-left:0.8rem;
+    margin-top: 1.2rem;
+}
+.input_secondary_labeled{
+    display: flex;
+    flex-direction:column;
+    margin-bottom:0.8rem;
+    margin-left:0.8rem;
+}
+.text{
+    font-size: medium;
+    margin-bottom: 0.2rem;
+}
+.section_horizontal{
+    display:flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.button{
+    font-size: medium;
+    padding: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.checkbox_div{
+    display: flex;
+    align-items: center;
+}
+
+.centered{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form_container{
+    width: 55%;
+    background-color: var(--p-surface-ground);
+    margin-top:0.8rem;
+}
+
+.container{
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.title{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header_text{
+    font-size: xx-large;
+    margin-bottom: 0.4rem;
+}
+
+.subheader_text{
+    font-size: large;
+    margin-bottom: 0.4rem;
+    margin-top: 0.8rem;
+    font-weight: bold;
+}
+
+.popup{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 35rem;
+    padding-top:2rem;
+}
+
+.dialog{
+    width:25rem;
+    height:20rem;
+    overflow:hidden;
+    margin-top:0;
+}
+
+.popup_nocompnts{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20rem;
+    height: 8rem;
+}
+
+#popup_header{
+    margin-bottom: 0.8rem;
+}
+
+.spacer{
+    width:2rem;
+}
+
+#ex_button{
+    margin-top:1rem;
+}
+#add_adoption{
+    margin-left: 2rem;
+}

@@ -1,0 +1,26 @@
+Business constraints
+
+* If else is statements are fine
+    * If not is fine
+* Sorting will be added as a constraint for now until we get clarification
+* Will use the same verbiage as AC and TD
+* Combine format i.e. numbered bullet point
+* Leave unique email address BC as is
+* Ask TA about correct adoption details entails BC or AC
+* Birthday milestones is a BC
+* Focus on what can’t sufficiently be represented in the EER
+
+TC
+
+* Update dog and View dog will be separate tasks
+* Still ask TAs about subtasks once class is no longer inactive
+
+Data Types
+
+* Zip codes should be string according to stackoverflow
+    * Phone number should also be string according to the above logic
+
+IFD
+* Double check new diagram to match old one
+
+Use latex to combine reports

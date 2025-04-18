@@ -1,0 +1,23 @@
+INSERT INTO
+	Manufacturer(name)
+VALUES
+	('24PetWatch'),
+	('AKC Reunite'),
+	('AVID'),
+	('Banfield TruPaws'),
+	('BarkCode Solutions'),
+	('CritterID Systems'),
+	('Datamars'),
+	('Destron Fearing'),
+	('FurryTag Systems'),
+	('FurSecure ID'),
+	('FurTrack Microchips'),
+	('HomeAgain'),
+	('LifeChip'),
+	('PawID Technologies'),
+	('PawPrint ID'),
+	('PawTech Microchips'),
+	('PetGuardian Chips'),
+	('PetLink'),
+	('PetSafe Chips'),
+	('Trovan');

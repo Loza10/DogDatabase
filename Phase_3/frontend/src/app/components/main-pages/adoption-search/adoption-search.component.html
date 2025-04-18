@@ -1,0 +1,148 @@
+<div>
+    <p-dialog [modal]="true" [(visible)]="adopt_info_popup_visible" class="dialog">
+        <div class="popup">
+            <h2>Adoption Information</h2>
+            <p>Adopter</p>
+            <p-table
+      [value]="[chosenApp]"
+      [tableStyle]="{ 'min-width': '60rem' }"
+    >
+
+      <ng-template #header>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Application Date</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-chosenApp>
+        <tr>
+          <td>{{ chosenApp.firstName +" "+chosenApp.lastName}}</td>
+          <td>{{ chosenApp.street +" "+chosenApp.city+", "+chosenApp.state+" "+chosenApp.zipCode }}</td>
+          <td>{{ chosenApp.phoneNumber }}</td>
+          <td>{{ chosenApp.email}}</td>
+          <td>{{ chosenApp.applicationDate}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p>Dog</p>
+    <p-table
+      [value]="[dogFees]"
+      [tableStyle]="{ 'min-width': '60rem' }"
+    >
+      <ng-template #header>
+        <tr>
+            <th>Name</th>
+            <th>Fees</th>
+            
+        </tr>
+      </ng-template>
+      <ng-template #body let-dogFees>
+        <tr>
+          <td>{{ dogFees.name}}</td>
+          <td>{{ dogFees.fee + (dogFees.isWaived == 1 ? "(waived)" : "") }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+        </div>
+        <div [formGroup]="dateForm" class="form_container">
+        <div class="input">
+            <label for="decision_date" class="text">Adoption Date</label>
+            <p-datepicker formControlName="decision_date"/>
+        </div>
+        </div>
+        <div class="centered">
+            <button pButton pRipple label="Adopt" class="button" (click)="doAdoption();"></button> 
+        </div>
+    </p-dialog>
+    <!--confirm popup-->
+    <p-dialog [modal]="true" [(visible)]="adopt_confirm_popup" class="dialog">
+        <div class="popup">
+            <h2>Confirm Adoption</h2>
+            <p-table
+      [value]="[dogFees]"
+      [tableStyle]="{ 'min-width': '60rem' }"
+    >
+    <p>Adopter</p>
+      <ng-template #header>
+        <tr>
+            <th>Adopter Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+        </tr>
+      </ng-template>
+      <ng-template #body>
+        <tr>
+            <td>{{ chosenApp.firstName +" "+chosenApp.lastName}}</td>
+            <td>{{ chosenApp.street +" "+chosenApp.city+", "+chosenApp.state+" "+chosenApp.zipCode }}</td>
+            <td>{{ chosenApp.phoneNumber }}</td>
+            <td>{{ chosenApp.email}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p>Dog</p>
+    <p-table
+      [value]="[dogFees]"
+      [tableStyle]="{ 'min-width': '60rem' }"
+    >
+      <ng-template #header>
+        <tr>
+            <th>Dog Name</th>
+            <th>Fees</th>
+        </tr>
+      </ng-template>
+      <ng-template #body>
+        <tr>
+          <td>{{ dogFees.name}}</td>
+          <td>{{ dogFees.fee + (dogFees.isWaived == 1 ? "(waived)" : "") }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p>Adoption Date: {{this.dDateString}}</p>
+    <div class="centered">
+            <div class="section_horizontal">
+                <button pButton pRipple id="cancel" label="Cancel" class="button" (click)="cancel();"></button> 
+                <button pButton pRipple label="Confirm" class="button" (click)="confirmAdoption();"></button> 
+            </div>
+        </div></div>
+    </p-dialog>
+
+<h2>Search for Approved Adoption Applications</h2>
+<div class="input">
+    <label for="vol_name" class="text">Search for Adopters</label>
+    <input id="vol_name" type="text" placeholder="Name" pInputText (input)="updateReport($event)">
+</div>
+
+<div class="card">
+    <p-table
+      [value]="apps"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 15, 20]"
+    >
+
+      <ng-template #header>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Application Date</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-apps>
+        <tr>
+          <td (click)="adoptionClick(apps.email)" class="drill">{{ apps.firstName +" "+apps.lastName}}</td>
+          <td>{{ apps.street +" "+apps.city+", "+apps.state+" "+apps.zipCode }}</td>
+          <td>{{ apps.phoneNumber }}</td>
+          <td>{{ apps.email}}</td>
+          <td>{{apps.applicationDate}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

@@ -1,0 +1,168 @@
+\documentclass{article}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{float}
+\hypersetup{
+  colorlinks   = true,
+  urlcolor     = blue,   
+  linkcolor    = blue,     
+}
+
+%page setup- title and author
+\title{Project Phase 1}
+\author{Team 025}
+\pagestyle{fancy}
+
+%header and footer
+\fancyhf{}
+\fancyhfoffset[L]{1cm}
+\fancyhfoffset[R]{1cm}
+\lhead{Phase 1 Report}
+\chead{CS 6400 - Spring 2025}
+\rhead{Team 025}
+\lfoot{\hyperlink{toc}{Table of Contents}}
+\rfoot{\thepage}
+
+%table of contents
+\begin{document}
+\maketitle
+\tableofcontents
+\newpage
+
+\section{Data Types}
+
+\noindent\textbf{Dog}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}         & \textbf{Data Type}                  & \textbf{Nullable} \\ \hline
+    BirthDate                  & Date                                & Not Null          \\ \hline
+    DogID                      & Integer                             & Not Null          \\ \hline
+    Description                & String                              & Null              \\ \hline
+    Altered                    & Boolean                             & Not Null          \\ \hline
+    Sex                        & String                              & Not Null          \\ \hline
+    Name                       & String                              & Not Null          \\ \hline
+    SurrenderDate              & Date                                & Not Null          \\ \hline
+    SurrenderPhone             & String                              & Null              \\ \hline
+    ByAnimalControl            & Boolean                             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Breed}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}        & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Name                      & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Microchip}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}        & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    MicrochipID               & String            & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Manufacturer}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}        & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Name                      & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Expense}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}   & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Amount               & Float              & Not Null          \\ \hline
+    Vendor               & String             & Not Null          \\ \hline
+    Date                 & Date               & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Category}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}   & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Name               & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+\noindent \textbf{Person}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute} & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Email              & String             & Not Null          \\ \hline
+    FirstName          & String             & Not Null          \\ \hline
+    LastName           & String             & Not Null          \\ \hline
+    Phone              & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent\textbf{User}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute} & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Password           & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent\textbf{Director}
+
+No attributes for this entity
+\begin{table}[H]
+\end{table}
+
+\noindent\textbf{Volunteer}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute} & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    BirthDate          & Date               & Not Null          \\ \hline 
+    \end{tabular}
+\end{table}
+
+\noindent\textbf{Adopter}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute} & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Street         & String             & Not Null          \\ \hline
+    City           & String             & Not Null          \\ \hline
+    State          & String             & Not Null          \\ \hline
+    Zip            & String            & Not Null          \\ \hline
+    Household      & Integer            & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\noindent \textbf{Application}
+\begin{table}[H]
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Attribute}       & \textbf{Data Type} & \textbf{Nullable} \\ \hline
+    Date                     & Date               & Not Null          \\ \hline
+    DecisionDate             & Date               & Null          \\ \hline
+    IsFeeWaived              & Boolean            & Not Null          \\ \hline
+    Fee                      & Float              & Not Null          \\ \hline
+    Status                   & String             & Not Null          \\ \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+\section{Business Logic Constraints}
+
+\newpage
+\section{Task Decomposition with Abstract Code}
+
+
+\end{document}

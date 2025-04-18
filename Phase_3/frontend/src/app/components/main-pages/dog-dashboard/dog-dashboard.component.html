@@ -1,0 +1,63 @@
+<div>
+  <app-header-home [maxCapacityReached]="availableSpace"></app-header-home>
+  <div class="card">
+    <p-table
+      [value]="dogs"
+      [tableStyle]="{ 'min-width': '60rem' }"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 15, 20]"
+    >
+      <ng-template #caption>
+        <div class="table_header">
+          <span class="text-xl font-bold"
+            >Current Dogs in Shelter
+            <p-badge [value]="currentNumberOfDogs + '/' + maxCapacty"></p-badge
+          ></span>
+          <p-button icon="pi pi-refresh" rounded raised />
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th style="width: 15%">Name</th>
+          <th style="width: 20%">Breed</th>
+          <th style="width: 10%">Sex</th>
+          <th style="width: 15%">Alteration Status</th>
+          <th style="width: 15%">Age</th>
+          <th style="width: 25%">
+            Adoptability Status
+            <p-columnFilter
+              field="adoptability"
+              matchMode="equals"
+              [showMenu]="false"
+            >
+              <ng-template #filter let-value let-filter="filterCallback">
+                <p-select
+                  [ngModel]="value"
+                  [options]="statuses"
+                  (onChange)="filter($event.value)"
+                  placeholder="Select One"
+                  [showClear]="false"
+                  class="w-full md:w-56"
+                >
+                </p-select>
+              </ng-template>
+            </p-columnFilter>
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-dog>
+        <tr>
+          <td>
+            <a [routerLink]="['/dog-details', dog.dogID]">{{ dog.dogName }}</a>
+          </td>
+          <td>{{ dog.breeds }}</td>
+          <td>{{ dog.sex }}</td>
+          <td>{{ dog.altered == true ? "Yes" : "No" }}</td>
+          <td>{{ dog.ageYears + " Years " + dog.ageMonths + " Months" }}</td>
+          <td>{{ dog.adoptability }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

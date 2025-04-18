@@ -1,0 +1,41 @@
+<div class="container">
+  <p-card class="popup" ng-cloak>
+    <div class="title">
+      <div class="welcome">Welcome Back</div>
+    </div>
+    <p-messages></p-messages>
+
+    <div>
+      <div class="text_input">
+        <label for="email1" class="text">Email</label>
+        <input
+          id="email1"
+          type="text"
+          placeholder="Email address"
+          pInputText
+          [(ngModel)]="emailAddress"
+        />
+      </div>
+
+      <div class="text_input">
+        <label for="password1" class="text">Password</label>
+        <input
+          id="password1"
+          type="password"
+          placeholder="Password"
+          pInputText
+          [(ngModel)]="password"
+        />
+      </div>
+
+      <button
+        pButton
+        pRipple
+        label="Sign In"
+        icon="pi pi-user"
+        class="main_button"
+        (click)="btnClick()"
+      ></button>
+    </div>
+  </p-card>
+</div>

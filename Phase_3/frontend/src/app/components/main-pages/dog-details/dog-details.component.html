@@ -1,0 +1,133 @@
+<!--TODO: fix hardcoded Biscuit dog info when backend is working-->
+<div>
+    <p-dialog [modal]="true" [(visible)]="expense_popup_visible" class="dialog">
+        <div class="popup">
+            <app-add-expense></app-add-expense>
+<!--            <button pButton pRipple label="Add Expenses" class="button" (click)="closeExpenseClick();"></button>-->
+        </div>
+    </p-dialog>
+
+    <p-dialog [modal]="true" [(visible)]="confirm_popup_visible" class="dialog">
+        <div class="popup_nocompnts">
+            <div class="subheader_text" id="popup_header">{{this.dogName}} has been updated!</div>
+            <div class="section_horizontal">
+                <button pButton pRipple label="Return to Dashboard" class="button" (click)="dogDashboardClick();"></button> 
+            </div>
+        </div>
+    </p-dialog>
+    <div class="container">
+        <div [formGroup]="addDogForm" class="form_container">
+            <div class="section_horizontal">
+                <div class="header_text">{{this.dogName}}</div>
+                <button pButton pRipple *ngIf="this.adopt_visible" label="Add Adoption" class="button" (click)="addAdoptionClick();" id="add_adoption"></button>
+            </div>
+            <div>
+                <div class="subheader_text">General Dog Information</div>
+            </div>
+                <div class="input">
+                    <label for="dog_name" class="text">Dog Name</label>
+                    <input id="dog_name" type="text" placeholder="Name" pInputText formControlName="dog_name">
+                </div>
+
+            <div class="input">
+                <label class="text">Breed</label>
+                <p-multiselect [options]="breed_options" (onChange) = "breedChange()" formControlName="breeds" optionLabel="name" placeholder="Select Breeds" styleClass="w-full md:w-80" />
+            </div>
+
+            <div class="input">
+                <label class="text">Sex</label>
+                <p-select [options]="sex_options" formControlName="sex" optionLabel="name" placeholder="Select Sex" styleClass="w-full md:w-80" />
+            </div>
+
+            <div class="input">
+                <label class="text">Alteration Status</label>
+                <div class="checkbox-div">
+                    <p-checkbox id="altered" formControlName="altered" [binary]="true" styleClass="mr-2"></p-checkbox>
+                    <label for="altered" class="text">Yes, this dog was neutered or spayed</label>
+                </div>
+            </div>
+
+            <div class="section_horizontal">
+                <div class="input">
+                    <label for="age_years" class="text">Age</label>
+                    <input id="age_years" type="text" placeholder="Age in years" pInputText formControlName="age_years">
+                </div>
+
+                <div class="input_secondary">
+                    <label for="age_months" class="text"></label>
+                    <input id="age_months" type="text" placeholder="Age in months" pInputText formControlName="age_months">
+                </div>
+            </div>
+
+            <div class="input">
+                <label for="description" class="text">Description</label>
+                <input id="description" type="text" placeholder="Optional: description" pInputText formControlName="description">
+            </div>
+
+            <div class="section_horizontal">
+                <div class="input">
+                    <label for="microchip_id" class="text">Microchip</label>
+                    <input id="microchip_id" type="text" placeholder="Microchip ID" pInputText formControlName="microchip_id">
+                </div>
+
+                <div class="input_secondary">
+                    <label class="text"></label>
+                    <p-select [options]="manufacturer_options" formControlName="manufacturers" optionLabel="name" placeholder="Select Manufacturer" styleClass="w-full md:w-80" />
+                </div>
+            </div>
+            <div>
+                <div class="subheader_text">Surrender Information</div>
+            </div>
+            <div class="input">
+                <label for="surrender_date" class="text">Surrender Date</label>
+                <p-datepicker formControlName="surrender_date"/>
+            </div>
+
+            <div class="input">
+                <label for="surrender_phone" class="text">Surrender Phone Number</label>
+                <input id="surrender_phone" type="text" placeholder="Optional: surrender phone number" pInputText formControlName="surrender_phone">
+            </div>
+
+            <div class="input">
+                <label class="text">Surrendered by Animal Control</label>
+                <div class="checkbox-div">
+                    <p-checkbox id="surrender_animalctrl" formControlName="surrender_animalctrl" [binary]="true" styleClass="mr-2"></p-checkbox>
+                    <label for="surrender_animalctrl" class="text">Yes, this dog was surrendered by local animal control</label>
+                </div>
+            </div>
+
+            <div>
+                <div class="subheader_text">Expense Information</div>
+            </div>
+            <!-- TODO: Add table for entered expenses, refresh after a new expense is added-->
+            <p-table
+    [value]="expenses"
+    [paginator]="true"
+    [rows]="10"
+    [showCurrentPageReport]="true"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    styleClass="p-datatable-striped"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:20%">Category</th>
+        <th style="width:20%">Amount</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-report>
+      <tr>
+        <td>{{report.category}}</td>
+        <td>{{report.amount | currency:'USD':'symbol'}}</td>     
+      </tr>
+    </ng-template>
+  </p-table>
+            <button pButton pRipple label="Add Expenses" class="button" (click)="addExpenseClick();" id="ex_button" *ngIf="this.add_expenses" ></button> 
+
+            <div class="centered">
+                <button pButton pRipple label="Save Dog" class="button" (click)="saveDogClick();" *ngIf="this.add_expenses"></button>
+            </div>
+        </div>
+    </div>
+</div>

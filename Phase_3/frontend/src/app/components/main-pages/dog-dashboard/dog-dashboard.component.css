@@ -1,0 +1,13 @@
+.table_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+a {
+    color: var(--p-primary-color);
+    text-decoration: none;
+}
+
+:host ::ng-deep .p-datatable-table-container {
+    overflow: visible !important;
+}

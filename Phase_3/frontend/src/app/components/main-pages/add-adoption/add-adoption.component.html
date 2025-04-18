@@ -1,0 +1,141 @@
+<div>
+  <p-dialog [modal]="true" [(visible)]="confirm_popup_visible" class="dialog">
+    <div class="popup_nocompnts">
+      <div class="subheader_text" id="popup_header">
+        The application has been added!
+      </div>
+      <div class="section_horizontal">
+        <button
+          pButton
+          pRipple
+          label="Return to Dashboard"
+          class="button"
+          (click)="dogDashboardClick()"
+        ></button>
+      </div>
+    </div>
+  </p-dialog>
+  <div class="container">
+    <p-messages></p-messages>
+    <div [formGroup]="addAdoptionForm" class="form_container">
+      <div class="title">
+        <div class="header_text">Add Adoption Application</div>
+      </div>
+
+      <div class="section_horizontal">
+        <div class="input">
+          <label for="name_first" class="text">Name</label>
+          <input
+            id="name_first"
+            type="text"
+            placeholder="First Name"
+            pInputText
+            formControlName="name_first"
+          />
+        </div>
+
+        <div class="input_secondary">
+          <label for="name_last" class="text"></label>
+          <input
+            id="name_last"
+            type="text"
+            placeholder="Last Name"
+            pInputText
+            formControlName="name_last"
+          />
+        </div>
+      </div>
+
+      <p class="text">Address</p>
+      <div class="section_horizontal">
+        <div class="input">
+          <label for="address_street" class="text">Street</label>
+          <input
+            id="address_street"
+            type="text"
+            placeholder="Street"
+            pInputText
+            formControlName="address_street"
+          />
+        </div>
+
+        <div class="input_secondary_labeled">
+          <label for="address_city" class="text">City</label>
+          <input
+            id="address_city"
+            type="text"
+            placeholder="City"
+            pInputText
+            formControlName="address_city"
+          />
+        </div>
+
+        <div class="input_secondary_labeled">
+          <label for="address_state" class="text">State</label>
+          <p-select
+            [options]="state_options"
+            formControlName="address_state"
+            optionLabel="name"
+            placeholder="Select State"
+            styleClass="w-full md:w-80"
+          />
+        </div>
+
+        <div class="input_secondary_labeled" id="zip">
+          <label for="address_zip" class="text">Zip Code</label>
+          <input
+            id="address_zip"
+            type="text"
+            placeholder="Zip Code"
+            pInputText
+            formControlName="address_zip"
+          />
+        </div>
+      </div>
+
+      <div class="section_horizontal">
+        <div class="input">
+          <label for="email" class="text">Email</label>
+          <input
+            id="email"
+            type="text"
+            placeholder="Email"
+            pInputText
+            formControlName="email"
+          />
+        </div>
+        <div class="input_secondary_labeled">
+          <label for="phone" class="text">Phone Number</label>
+          <input
+            id="phone"
+            type="text"
+            placeholder="Phone Number"
+            pInputText
+            formControlName="phone"
+          />
+        </div>
+      </div>
+
+      <div class="input">
+        <label for="household_size" class="text">Household Size</label>
+        <input
+          id="household_size"
+          type="text"
+          placeholder="Household Size"
+          pInputText
+          formControlName="household_size"
+        />
+      </div>
+
+      <div class="centered">
+        <button
+          pButton
+          pRipple
+          label="Add Adoption"
+          class="button"
+          (click)="addAdoptionClick()"
+        ></button>
+      </div>
+    </div>
+  </div>
+</div>
